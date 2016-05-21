@@ -2,11 +2,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -85,10 +83,13 @@ public class LoginView {
                     //Add a zero
                     currentPinCode += "0";
                     pinCode.setText(currentPinCode);
-                } else {
+                } else if (Integer.parseInt(button.getId()) == 12 && pinCode.getText().equals("1111")){
+
+                    primaryStage.hide();
+                    TableLayoutView tableLayoutView = new TableLayoutView();
+                    tableLayoutView.start(primaryStage);
                     //Try to login
                     //Add code here....
-
                 }
             });
             //Add the button to the grid

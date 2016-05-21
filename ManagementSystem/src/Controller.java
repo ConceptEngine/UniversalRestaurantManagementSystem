@@ -16,12 +16,13 @@ public class Controller extends Application{
     }
 
 
-    @Override
+    //@Override
     public void start(Stage primaryStage)
     {
         //Creates the first view class
         LoginView mainMenu = new LoginView();
         mainMenu.start(primaryStage);
+
     }
 
 
