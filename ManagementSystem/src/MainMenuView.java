@@ -1,4 +1,3 @@
-import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -42,8 +41,12 @@ public class MainMenuView {
         mainMenuItemsTest.add("fdere");
 
         VBox mainMenuBox = addVerticalMenuBox(mainMenuItemsTest);
+        VBox subMenuBox = addVerticalMenuBox(mainMenuItemsTest);
+        HBox bottomMenuBox = addHorizontalMenuBox(mainMenuItemsTest);
 
         layout.setRight(mainMenuBox);
+        layout.setCenter(subMenuBox);
+        layout.setBottom(bottomMenuBox);
 
 
         //initialising the view
@@ -55,20 +58,25 @@ public class MainMenuView {
 
     }
 
-    public HBox addHBox() {
-        HBox hbox = new HBox();
-        hbox.setPadding(new Insets(15, 12, 15, 12));
-        hbox.setSpacing(10);
-        hbox.setStyle("-fx-background-color: #336699;");
-
-        Button buttonCurrent = new Button("Current");
-        buttonCurrent.setPrefSize(100, 20);
-
-        Button buttonProjected = new Button("Projected");
-        buttonProjected.setPrefSize(100, 20);
-        hbox.getChildren().addAll(buttonCurrent, buttonProjected);
-
-        return hbox;
+    public HBox addHorizontalMenuBox(ArrayList<String> menuItems) {
+        //getting screen real estate
+        Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
+        //creating horizontal box
+        HBox horizontalMenuBox = new HBox();
+        // setting the size of the box
+        horizontalMenuBox.setPrefSize(screenSize.getWidth(), (screenSize.getHeight()/8)*1);
+        // starting for loop to create button, held by the box as children.
+        for (String menuItem : menuItems) {
+            //setting the name of the button ---- first in the array will be the first button's name and so on...
+            Button button = new Button(menuItem);
+            //setting ID of buttons to the string names
+            button.setId(menuItem);
+            // adding button to the box
+            horizontalMenuBox.getChildren().add(button);
+            //setting button size
+            button.setPrefSize((screenSize.getWidth() / 6), (screenSize.getHeight() / 8) * 1);
+        }
+        return horizontalMenuBox;
     }
 
     public VBox addVerticalMenuBox(ArrayList<String> menuItems){
@@ -79,39 +87,28 @@ public class MainMenuView {
 
         //getting screen real estate
         Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
-
         //creating the menu box
         VBox verticalMenuBox = new VBox();
-
         //setting size width for 2/9 and height for 7/8 - (fraction) - of the whole screen
         //this is gonna be one collum out of the 3 that we have on the main menu.
         verticalMenuBox.setPrefSize((screenSize.getWidth()/9)*2, (screenSize.getHeight()/8)*7);
-
-
         // creating button by the number of element found in menuItem.
-
         for (String menuItem : menuItems) {
-
-
-
             //setting the name of the button ---- first in the array will be the first button's name and so on...
             Button button = new Button(menuItem);
+            //setting ID of buttons to the string names
+            button.setId(menuItem);
             // adding button to the box
             verticalMenuBox.getChildren().add(button);
-
             //setting button size
             button.setPrefSize((screenSize.getWidth() / 9) * 2, (screenSize.getHeight() / 8) * 1);
-
         }
-
         //setting the "down button"
         Button downButton = new Button("Show More");
         downButton.setStyle("-fx-background-color: yellow");
         downButton.setPrefSize((screenSize.getWidth() / 9) * 2, (screenSize.getHeight() / 8) * 1);
-        verticalMenuBox.getChildren().add(5, downButton);
-
-
-
+        verticalMenuBox.getChildren().add(6, downButton);
+        //returning the ready menuBox.
         return verticalMenuBox;
     }
 
