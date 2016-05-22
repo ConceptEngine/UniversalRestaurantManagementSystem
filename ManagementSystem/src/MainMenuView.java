@@ -1,3 +1,4 @@
+import javafx.geometry.NodeOrientation;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -36,13 +37,13 @@ public class MainMenuView {
 
         ArrayList<String> mainMenuItemsTest = new ArrayList<>();
 
-        //TO_DO - creating a test arraylist, have to delete later and reference to a local DB source
-        mainMenuItemsTest.add("drinks");
-        mainMenuItemsTest.add("Food");
-        mainMenuItemsTest.add("test");
-        mainMenuItemsTest.add("");
-        mainMenuItemsTest.add("vfvf");
-        mainMenuItemsTest.add("fdere");
+        //TO_DO - creating a test arrayList, have to delete later and reference to a local DB source
+        mainMenuItemsTest.add("PAY");
+        mainMenuItemsTest.add("PRINT");
+        mainMenuItemsTest.add("CANCEL");
+        mainMenuItemsTest.add("MESSAGE");
+        mainMenuItemsTest.add("SEND");
+        mainMenuItemsTest.add("END");
 
         VBox mainMenuBox = addVerticalMenuBox(mainMenuItemsTest);
         VBox subMenuBox = addVerticalMenuBox(mainMenuItemsTest);
@@ -51,6 +52,8 @@ public class MainMenuView {
         //layout.setRight(mainMenuBox);
         //layout.setCenter(subMenuBox);
         layout.setBottom(bottomMenuBox);
+        // setting the menu build from right-to-left.
+        //layout.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
 
         refreshMenuItemBoxes();
         //initialising the view
@@ -88,7 +91,7 @@ public class MainMenuView {
 
     public VBox addVerticalMenuBox(ArrayList<String> menuItems){
         // vertical box to accommodate buttons with names, whats given at creation.
-        // button names to be held in a Arraylist<String> and dynamically created from external source, can ba changed later
+        // button names to be held in a ArrayList<String> and dynamically created from external source, can ba changed later
         // for anything that lets say that holds objects, so an item can have Name, Price, and so on....
         // number of buttons created by the size of this given String[]
 
@@ -97,7 +100,7 @@ public class MainMenuView {
         //creating the menu box
         VBox verticalMenuBox = new VBox();
         //setting size width for 2/9 and height for 7/8 - (fraction) - of the whole screen
-        //this is gonna be one collum out of the 3 that we have on the main menu.
+        //this is gonna be one column out of the 3 that we have on the main menu.
         verticalMenuBox.setPrefSize((screenSize.getWidth() / 9) * 2, (screenSize.getHeight() / 8) * 7);
         // creating button by the number of element found in menuItem.
         for (String menuItem : menuItems) {
@@ -123,6 +126,7 @@ public class MainMenuView {
     {
         //VBox mainMenuBox = addVerticalMenuBox(mainMenuItemsTest);
         grid.getChildren().clear();
+        grid.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
 
         VBox firstColumn = addVerticalMenuBox2(menuItems, 1, 0);   //Display first level
         grid.add(firstColumn, 0, 0);
