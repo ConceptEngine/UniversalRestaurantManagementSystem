@@ -41,9 +41,9 @@ public class DatabaseObject implements DatabaseAccessObject {
         return false;
     }
 
-    public ArrayList<menuItem> getMenuItems()
+    public ArrayList<MenuItem> getMenuItems()
     {
-        ArrayList<menuItem> menuItems = new ArrayList<>();
+        ArrayList<MenuItem> menuItems = new ArrayList<>();
 
         try {
             String sql = "SELECT * FROM item";
@@ -54,7 +54,7 @@ public class DatabaseObject implements DatabaseAccessObject {
 
             while (resultSet.next()) {
                 //Add the current row to the arraylist
-                menuItem currentItem = new menuItem(resultSet.getInt(1),
+                MenuItem currentItem = new MenuItem(resultSet.getInt(1),
                         resultSet.getInt(2),
                         resultSet.getInt(3),
                         resultSet.getString(4),
@@ -70,7 +70,7 @@ public class DatabaseObject implements DatabaseAccessObject {
         return menuItems;
     }
 
-    public void InsertMenuItem(menuItem anItem)
+    public void InsertMenuItem(MenuItem anItem)
     {
         String sql="INSERT INTO item VALUES (null, ?, ?, ?, ?)\n";
 

@@ -8,7 +8,7 @@ public interface DatabaseAccessObject {
         public void ConnectToDatabase();
 
         public boolean tryToLogin(String password);
-        public ArrayList<menuItem> getMenuItems();
-        public void InsertMenuItem(menuItem anItem);
+        public ArrayList<MenuItem> getMenuItems();
+        public void InsertMenuItem(MenuItem anItem);
 
 }
