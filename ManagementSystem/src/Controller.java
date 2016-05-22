@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 
 public class Controller extends Application{
     //I'm improvising
+    DatabaseAccessObject dbo = new DatabaseObject();
 
     //Sets up and starts the application
     public static void main(String[] args) {
@@ -19,9 +20,11 @@ public class Controller extends Application{
     //@Override
     public void start(Stage primaryStage)
     {
+        dbo.ConnectToDatabase();
+
         //Creates the first view class
-        LoginView mainMenu = new LoginView();
-        mainMenu.start(primaryStage);
+        LoginView loginMenu = new LoginView();
+        loginMenu.start(primaryStage, dbo);
 
     }
 

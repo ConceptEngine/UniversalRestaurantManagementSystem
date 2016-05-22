@@ -26,7 +26,7 @@ public class LoginView {
 
     }
 
-    public void start(Stage primaryStage)
+    public void start(Stage primaryStage, DatabaseAccessObject dbo)
     {
         //Get window size, so we can calculate other stuff later
         Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
@@ -83,13 +83,14 @@ public class LoginView {
                     //Add a zero
                     currentPinCode += "0";
                     pinCode.setText(currentPinCode);
-                } else if (Integer.parseInt(button.getId()) == 12 && pinCode.getText().equals("1111")){
-
-                    primaryStage.hide();
-                    TableLayoutView tableLayoutView = new TableLayoutView();
-                    tableLayoutView.start(primaryStage);
-                    //Try to login
-                    //Add code here....
+                } else {
+                    if (dbo.tryToLogin(pinCode.getText()) == true) {
+                        //primaryStage.hide();
+                        TableLayoutView tableLayoutView = new TableLayoutView();
+                        tableLayoutView.start(primaryStage, dbo);
+                        //Try to login
+                        //Add code here....
+                    }
                 }
             });
             //Add the button to the grid

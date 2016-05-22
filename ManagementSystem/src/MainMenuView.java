@@ -22,7 +22,7 @@ public class MainMenuView {
 
     }
 
-    public void start(Stage primaryStage){
+    public void start(Stage primaryStage, DatabaseAccessObject dbo){
 
         Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
 

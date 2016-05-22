@@ -19,7 +19,7 @@ public class TableLayoutView {
 
     }
 
-    public void start(Stage primaryStage){
+    public void start(Stage primaryStage, DatabaseAccessObject dbo){
 
         Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
 
@@ -48,7 +48,7 @@ public class TableLayoutView {
 
                 if (button.getText().equals("1")){
                     MainMenuView mainMenuView = new MainMenuView();
-                    mainMenuView.start(primaryStage);
+                    mainMenuView.start(primaryStage, dbo);
                 }
                 // code here for assigning to next TableView with the main menu.
             });
