@@ -1,7 +1,12 @@
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -22,6 +27,14 @@ public class MainMenuView {
     int selectedItemLevel1ID = 0;
     int selectedItemLevel2ID = 0;
 
+    final ObservableList<Item> itemsForDisplay = FXCollections.observableArrayList(
+            new Item("Mojito", 95.00, "Baverage"),
+            new Item("Coke", 30.00, "Baverage"),
+            new Item("Rib Eye Steak", 200.00, "Food"),
+            new Item("Pancake", 60.00, "Food"),
+            new Item("Water", 10.00, "Baverage")
+    );
+
     public MainMenuView(){
 
     }
@@ -37,6 +50,7 @@ public class MainMenuView {
 
         ArrayList<String> mainMenuItemsTest = new ArrayList<>();
 
+
         //TO_DO - creating a test arrayList, have to delete later and reference to a local DB source
         mainMenuItemsTest.add("PAY");
         mainMenuItemsTest.add("PRINT");
@@ -48,10 +62,12 @@ public class MainMenuView {
         VBox mainMenuBox = addVerticalMenuBox(mainMenuItemsTest);
         VBox subMenuBox = addVerticalMenuBox(mainMenuItemsTest);
         HBox bottomMenuBox = addHorizontalMenuBox(mainMenuItemsTest);
+        VBox billBox = addItemDisplay(itemsForDisplay);
 
         //layout.setRight(mainMenuBox);
         //layout.setCenter(subMenuBox);
         layout.setBottom(bottomMenuBox);
+        layout.setLeft(billBox);
         // setting the menu build from right-to-left.
         //layout.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
 
@@ -318,6 +334,36 @@ public class MainMenuView {
         return verticalMenuBox;
     }
 
+    public VBox addItemDisplay(ObservableList<Item> items){
 
+        // creating display layout
+        Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
+        VBox itemDisplay = new VBox();
+        itemDisplay.setPrefSize((screenSize.getWidth() / 3), (screenSize.getHeight()));
+
+        //creating tableView to have rows and columns
+        TableView tableLayoutView = new TableView(items);
+        tableLayoutView.setPrefSize(screenSize.getWidth()/3, screenSize.getHeight());
+        //creating the 3 columns
+        TableColumn tableColumn1 = new TableColumn("#");
+        TableColumn tableColumn2 = new TableColumn("Item Name");
+        TableColumn tableColumn3 = new TableColumn("Price");
+
+        tableColumn1.setCellValueFactory(new PropertyValueFactory<>("index"));
+        tableColumn2.setCellValueFactory(new PropertyValueFactory<>("name"));
+        tableColumn3.setCellValueFactory(new PropertyValueFactory<>("price"));
+        //setting column widht
+        tableColumn1.setMinWidth((itemDisplay.getPrefWidth()/10) * 1);
+        tableColumn2.setMinWidth((itemDisplay.getPrefWidth()/10) * 7);
+        tableColumn3.setMinWidth((itemDisplay.getPrefWidth()/10)* 2);
+        //adding columns to table
+
+        tableLayoutView.getColumns().addAll(tableColumn1, tableColumn2, tableColumn3);
+
+        //adding bill view to vbox
+        itemDisplay.getChildren().add(tableLayoutView);
+        //returning the ready view
+        return itemDisplay;
+    }
 
 }

@@ -63,6 +63,10 @@ public class LoginView {
                         //Try to login
                         //Add code here....
                     }
+                    else {
+                        currentPinCode = "invalid pin, try again!";
+                        pinCode.setText(currentPinCode);
+                    }
                 }
                 currentPinCode += event.getText();
                 pinCode.setText(currentPinCode);
@@ -136,8 +140,6 @@ public class LoginView {
         // setting focus on pinField for quick type in on keyboard.
         // it has to be set after setting the scene.
         pinCode.requestFocus();
+
     }
-
-
-
 }
