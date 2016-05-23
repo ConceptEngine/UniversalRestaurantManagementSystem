@@ -58,7 +58,7 @@ public class TableLayoutView {
 
         layout.setCenter(grid);
 
-        Scene scene = new Scene(layout, screenSize.getWidth(),screenSize.getHeight());
+        Scene scene = new Scene(layout, screenSize.getWidth(), screenSize.getHeight() - 32);
         primaryStage.setTitle("Table Layout");
         primaryStage.setScene(scene);
         primaryStage.show();

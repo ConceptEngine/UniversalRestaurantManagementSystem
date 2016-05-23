@@ -13,7 +13,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.scene.control.Label;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +23,7 @@ import java.util.ArrayList;
  */
 public class MainMenuView {
 
-    GridPane grid;
+    GridPane grid, priceGrid;
     int[] scrollerLevel = new int[4];
     ArrayList<MenuItem> menuItems;
     int selectedItemLevel1ID = 0;
@@ -30,6 +32,10 @@ public class MainMenuView {
     TableView tableLayoutView;
     Stage primaryStage;
     DatabaseAccessObject dbo;
+
+    //For checkout
+    Label totalPriceLabel;
+
 
     final ObservableList<Item> itemsForDisplay = FXCollections.observableArrayList();
 
@@ -47,7 +53,7 @@ public class MainMenuView {
 
         BorderPane layout = new BorderPane();
         grid = new GridPane();
-
+        priceGrid = new GridPane();
 
         ArrayList<String> mainMenuItemsTest = new ArrayList<>();
 
@@ -66,10 +72,16 @@ public class MainMenuView {
         VBox billBox = addItemDisplay(itemsForDisplay);
 
 
+        totalPriceLabel = new Label("0");
+        priceGrid.add(billBox, 0, 0, 3, 1);
+        priceGrid.add(new Label("Total price:"), 0, 1);
+        priceGrid.add(totalPriceLabel, 1, 1);
+        priceGrid.add(new Label(" Kr"), 2, 1);
+
         //layout.setRight(mainMenuBox);
         //layout.setCenter(subMenuBox);
         layout.setBottom(bottomMenuBox);
-        layout.setLeft(billBox);
+        layout.setLeft(priceGrid);
         // setting the menu build from right-to-left.
         //layout.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
 
@@ -78,7 +90,7 @@ public class MainMenuView {
         layout.setCenter(grid);
 
         //initialising the view
-        Scene scene = new Scene(layout, screenSize.getWidth(),screenSize.getHeight());
+        Scene scene = new Scene(layout, screenSize.getWidth(), screenSize.getHeight() - 32);
         primaryStage.setTitle("Menu for Table");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -133,7 +145,7 @@ public class MainMenuView {
         VBox verticalMenuBox = new VBox();
         //setting size width for 2/9 and height for 7/8 - (fraction) - of the whole screen
         //this is gonna be one column out of the 3 that we have on the main menu.
-        verticalMenuBox.setPrefSize((screenSize.getWidth() / 9) * 2, (screenSize.getHeight() / 8) * 7);
+        verticalMenuBox.setPrefSize((screenSize.getWidth() / 9) * 2, (screenSize.getHeight() / 8) * 6);
         // creating button by the number of element found in menuItem.
         for (String menuItem : menuItems) {
             //setting the name of the button ---- first in the array will be the first button's name and so on...
@@ -294,21 +306,22 @@ public class MainMenuView {
                                 //Add it to the receipt
                                 boolean isInTheList = false;
                                 for (Item checkoutItem : itemsForDisplay){
-                                   // tableLayoutView.setItems(itemsForDisplay);
                                     if (checkoutItem.getID() == currentItem.getItemID())
                                     {
                                         isInTheList = true;
                                         checkoutItem.setQuantity(checkoutItem.getQuantity() + 1);
+                                        //tableLayoutView.refresh();
                                         Item replacementItem = new Item(currentItem.getItemID(), currentItem.getName(), currentItem.getPrice(), "getType?", checkoutItem.getQuantity());
                                         //itemsForDisplay.remove(currentItem);
                                         //itemsForDisplay.set(itemsForDisplay.indexOf(currentItem), checkoutItem );
                                         itemsForDisplay.set(itemsForDisplay.indexOf(checkoutItem), replacementItem);
-
                                     }
-
                                 }
+
                                 if (isInTheList == false)
                                     itemsForDisplay.add(new Item(currentItem.getItemID(), currentItem.getName(), currentItem.getPrice(), "getType?", 1));
+
+                                updateTotalPrice();
                             });
 
                             // adding button to the box
@@ -372,11 +385,11 @@ public class MainMenuView {
         // creating display layout
         Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
         VBox itemDisplay = new VBox();
-        itemDisplay.setPrefSize((screenSize.getWidth() / 3), (screenSize.getHeight()));
+        itemDisplay.setPrefSize((screenSize.getWidth() / 3), (screenSize.getHeight() / 5) * 4);
 
         //creating tableView to have rows and columns
         tableLayoutView = new TableView(items);
-        tableLayoutView.setPrefSize(screenSize.getWidth() / 3, screenSize.getHeight());
+        tableLayoutView.setPrefSize(screenSize.getWidth() / 3, (screenSize.getHeight() / 5) * 4);
         //creating the 3 columns
         TableColumn tableColumn1 = new TableColumn("Quantity");
         TableColumn tableColumn2 = new TableColumn("Item Name");
@@ -387,11 +400,14 @@ public class MainMenuView {
         tableColumn3.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
         //setting column width
         tableColumn1.setMinWidth((itemDisplay.getPrefWidth() / 10) * 1);
-        tableColumn2.setMinWidth((itemDisplay.getPrefWidth() / 10) * 7);
+        tableColumn2.setMinWidth((itemDisplay.getPrefWidth() / 10) * 6);
         tableColumn3.setMinWidth((itemDisplay.getPrefWidth() / 10) * 2);
         //adding columns to table
 
         tableLayoutView.getColumns().addAll(tableColumn1, tableColumn2, tableColumn3);
+
+
+
 
         //adding bill view to vbox
         itemDisplay.getChildren().add(tableLayoutView);
@@ -427,6 +443,20 @@ public class MainMenuView {
             if (found == true)
                 itemsForDisplay.remove(rowIndex);
         }
+
+        updateTotalPrice();
+    }
+
+    public void updateTotalPrice()
+    {
+        //calculate total price
+        int totalPrice = 0;
+        for (Item checkoutItem : itemsForDisplay) {
+            totalPrice += checkoutItem.getTotalPrice();
+        }
+
+        //Update label
+        totalPriceLabel.setText(Integer.toString(totalPrice));
     }
 
 }
