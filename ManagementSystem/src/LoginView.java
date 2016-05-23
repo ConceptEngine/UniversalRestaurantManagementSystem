@@ -1,8 +1,11 @@
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
@@ -38,6 +41,34 @@ public class LoginView {
         //Create the field which contains the pin code, it's not editable
         pinCode = new TextField("");
         pinCode.setEditable(false);
+
+        // setting keyboard for listening to all chars and DELETe and ENTER buttons
+        pinCode.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                //if we press "delet" button on keyboard
+                //this doesnt work for me some reason ----- TO_DO
+                if (event.getCode() == KeyCode.BACK_SPACE){
+                    currentPinCode = currentPinCode.substring(0, currentPinCode.length()-1);
+                    pinCode.setText(currentPinCode);
+                    System.out.println("delete pressed");
+                }
+                //if we press "enter" button on keyboard
+                if (event.getCode() == KeyCode.ENTER){
+                    if (dbo.tryToLogin(pinCode.getText()) == true) {
+                        //primaryStage.hide();
+                        TableLayoutView tableLayoutView = new TableLayoutView();
+                        tableLayoutView.start(primaryStage, dbo);
+                        System.out.println("enter pressed");
+                        //Try to login
+                        //Add code here....
+                    }
+                }
+                currentPinCode += event.getText();
+                pinCode.setText(currentPinCode);
+            }
+        });
+
         //Add 12 buttons to the pin code screen.
         //10 buttons for numbers, one for entering, and one for deleting.
         for (int i = 0; i < 12; i++) {
@@ -101,5 +132,12 @@ public class LoginView {
         primaryStage.setTitle("Login Menu");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        // setting focus on pinField for quick type in on keyboard.
+        // it has to be set after setting the scene.
+        pinCode.requestFocus();
     }
+
+
+
 }
