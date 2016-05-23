@@ -7,18 +7,24 @@ import java.util.GregorianCalendar;
  */
 public class Item {
 
+    private int id;
     private String name;
     private Double price;
     private String timeOfCreation;
     private String type;
+    private int quantity;
+    private double totalPrice;
 
     //constructor
-    public Item(String name, Double price, String type){
+    public Item(int id, String name, Double price, String type, int quantity){
+        this.id = id;
         this.name = name;
         this.price = price;
         this.type = type;
         timeOfCreation();
-
+        this.quantity = quantity;
+        totalPrice = 0;
+        calculateTotalPrice();
     }
 
     public String timeOfCreation(){
@@ -42,6 +48,7 @@ public class Item {
 
     public void setPrice(Double price) {
         this.price = price;
+        calculateTotalPrice();
     }
 
     public String getTimeOfCreation() {
@@ -61,4 +68,24 @@ public class Item {
     public void setName(String name) {
         this.name = name;
     }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+        calculateTotalPrice();
+    }
+
+    public void calculateTotalPrice()
+    {
+        totalPrice = price * quantity;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+    public int getID() { return id; }
+
 }

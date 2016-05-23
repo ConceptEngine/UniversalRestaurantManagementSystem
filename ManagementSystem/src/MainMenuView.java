@@ -26,14 +26,10 @@ public class MainMenuView {
     ArrayList<MenuItem> menuItems;
     int selectedItemLevel1ID = 0;
     int selectedItemLevel2ID = 0;
+    ArrayList<Item> receiptItems;
+    TableView tableLayoutView;
 
-    final ObservableList<Item> itemsForDisplay = FXCollections.observableArrayList(
-            new Item("Mojito", 95.00, "Baverage"),
-            new Item("Coke", 30.00, "Baverage"),
-            new Item("Rib Eye Steak", 200.00, "Food"),
-            new Item("Pancake", 60.00, "Food"),
-            new Item("Water", 10.00, "Baverage")
-    );
+    final ObservableList<Item> itemsForDisplay = FXCollections.observableArrayList();
 
     public MainMenuView(){
 
@@ -63,6 +59,7 @@ public class MainMenuView {
         VBox subMenuBox = addVerticalMenuBox(mainMenuItemsTest);
         HBox bottomMenuBox = addHorizontalMenuBox(mainMenuItemsTest);
         VBox billBox = addItemDisplay(itemsForDisplay);
+
 
         //layout.setRight(mainMenuBox);
         //layout.setCenter(subMenuBox);
@@ -276,6 +273,18 @@ public class MainMenuView {
                                 ///selectedItemLevel2ID = Integer.parseInt(button.getId());
                                 //refreshMenuItemBoxes();
                                 //Add it to the receipt
+                                boolean isInTheList = false;
+                                for (Item checkoutItem : itemsForDisplay){
+                                    if (checkoutItem.getID() == currentItem.getItemID())
+                                    {
+                                        isInTheList = true;
+                                        checkoutItem.setQuantity(checkoutItem.getQuantity() + 1);
+                                        tableLayoutView.refresh();
+                                    }
+
+                                }
+                                if (isInTheList == false)
+                                    itemsForDisplay.add(new Item(currentItem.getItemID(), currentItem.getName(), currentItem.getPrice(), "getType?", 1));
                             });
 
                             // adding button to the box
@@ -342,20 +351,20 @@ public class MainMenuView {
         itemDisplay.setPrefSize((screenSize.getWidth() / 3), (screenSize.getHeight()));
 
         //creating tableView to have rows and columns
-        TableView tableLayoutView = new TableView(items);
-        tableLayoutView.setPrefSize(screenSize.getWidth()/3, screenSize.getHeight());
+        tableLayoutView = new TableView(items);
+        tableLayoutView.setPrefSize(screenSize.getWidth() / 3, screenSize.getHeight());
         //creating the 3 columns
-        TableColumn tableColumn1 = new TableColumn("#");
+        TableColumn tableColumn1 = new TableColumn("Quantity");
         TableColumn tableColumn2 = new TableColumn("Item Name");
-        TableColumn tableColumn3 = new TableColumn("Price");
+        TableColumn tableColumn3 = new TableColumn("Total price");
 
-        tableColumn1.setCellValueFactory(new PropertyValueFactory<>("index"));
+        tableColumn1.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         tableColumn2.setCellValueFactory(new PropertyValueFactory<>("name"));
-        tableColumn3.setCellValueFactory(new PropertyValueFactory<>("price"));
-        //setting column widht
-        tableColumn1.setMinWidth((itemDisplay.getPrefWidth()/10) * 1);
-        tableColumn2.setMinWidth((itemDisplay.getPrefWidth()/10) * 7);
-        tableColumn3.setMinWidth((itemDisplay.getPrefWidth()/10)* 2);
+        tableColumn3.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
+        //setting column width
+        tableColumn1.setMinWidth((itemDisplay.getPrefWidth() / 10) * 1);
+        tableColumn2.setMinWidth((itemDisplay.getPrefWidth() / 10) * 7);
+        tableColumn3.setMinWidth((itemDisplay.getPrefWidth() / 10) * 2);
         //adding columns to table
 
         tableLayoutView.getColumns().addAll(tableColumn1, tableColumn2, tableColumn3);
@@ -364,6 +373,15 @@ public class MainMenuView {
         itemDisplay.getChildren().add(tableLayoutView);
         //returning the ready view
         return itemDisplay;
+    }
+
+    private void refreshReceiptWindow()
+    {
+        itemsForDisplay.removeAll();
+        for (Item item : receiptItems)
+        {
+            itemsForDisplay.add(item);
+        }
     }
 
 }
