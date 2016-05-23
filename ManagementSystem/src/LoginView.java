@@ -33,20 +33,16 @@ public class LoginView {
 
         BorderPane layout = new BorderPane();   //Make the layout
         grid = new GridPane();                  //Grid pane to hold all the JavFX elements
-
         //Set the login grid at the exact center of the screen
         layout.setPadding(new Insets(screenSize.getHeight()/2 - 125, 10, 10, screenSize.getWidth()/2 - 150));
-
         //Create the field which contains the pin code, it's not editable
         pinCode = new TextField("");
         pinCode.setEditable(false);
-
         //Add 12 buttons to the pin code screen.
         //10 buttons for numbers, one for entering, and one for deleting.
         for (int i = 0; i < 12; i++) {
             //Create a new button
             Button button = new Button(Integer.toString(i+1));
-
             //Check if it's a special button (entering or deleting)
             if (i == 9)
             {
@@ -60,7 +56,6 @@ public class LoginView {
             {
                 button.setText("Login");
             }
-
             //Set button sizes
             button.setId(Integer.toString(i+1));
             button.setMinHeight(55);
@@ -101,15 +96,10 @@ public class LoginView {
         //Set the pin code grid as the center element
         layout.setCenter(grid);
 
-
-
         //Make the window and set the layout
         Scene scene = new Scene(layout, screenSize.getWidth(), screenSize.getHeight() - 32);
         primaryStage.setTitle("Login Menu");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
-
-
 }

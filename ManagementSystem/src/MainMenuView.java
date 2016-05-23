@@ -142,7 +142,6 @@ public class MainMenuView {
             //Show second column
             VBox thirdColumn = addVerticalMenuBox2(menuItems, 3, selectedItemLevel2ID);   //Display third level
             grid.add(thirdColumn, 2, 0);
-
             // }
         }
 
