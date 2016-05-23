@@ -22,10 +22,9 @@ public class Controller extends Application{
     {
         dbo.ConnectToDatabase();
 
-        //Creates the first view class
-        LoginView loginMenu = new LoginView();
-        loginMenu.start(primaryStage, dbo);
-
+            //Creates the first view class
+            LoginView loginMenu = new LoginView();
+            loginMenu.start(primaryStage, dbo);
     }
 
 

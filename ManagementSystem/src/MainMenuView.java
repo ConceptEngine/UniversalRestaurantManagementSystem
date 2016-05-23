@@ -28,6 +28,8 @@ public class MainMenuView {
     int selectedItemLevel2ID = 0;
     ArrayList<Item> receiptItems;
     TableView tableLayoutView;
+    Stage primaryStage;
+    DatabaseAccessObject dbo;
 
     final ObservableList<Item> itemsForDisplay = FXCollections.observableArrayList();
 
@@ -36,6 +38,9 @@ public class MainMenuView {
     }
 
     public void start(Stage primaryStage, DatabaseAccessObject dbo){
+        this.primaryStage = primaryStage;
+        this.dbo = dbo;
+
         menuItems = dbo.getMenuItems();
 
         Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
@@ -50,7 +55,7 @@ public class MainMenuView {
         //TO_DO - creating a test arrayList, have to delete later and reference to a local DB source
         mainMenuItemsTest.add("PAY");
         mainMenuItemsTest.add("PRINT");
-        mainMenuItemsTest.add("CANCEL");
+        mainMenuItemsTest.add("REMOVE");
         mainMenuItemsTest.add("MESSAGE");
         mainMenuItemsTest.add("SEND");
         mainMenuItemsTest.add("END");
@@ -94,6 +99,20 @@ public class MainMenuView {
             Button button = new Button(menuItem);
             //setting ID of buttons to the string names
             button.setId(menuItem);
+
+            if (menuItem == "END")
+            {
+                button.setOnAction(event -> {
+                    LoginView loginMenu = new LoginView();
+                    loginMenu.start(primaryStage, dbo);
+                });
+            }
+            if (menuItem == "REMOVE")
+            {
+                button.setOnAction(event -> {
+                    removeSelectedRow();
+                });
+            }
             // adding button to the box
             horizontalMenuBox.getChildren().add(button);
             //setting button size
@@ -381,6 +400,27 @@ public class MainMenuView {
         for (Item item : receiptItems)
         {
             itemsForDisplay.add(item);
+        }
+    }
+
+    private void removeSelectedRow()
+    {
+        Item item = (Item)tableLayoutView.getSelectionModel().getSelectedItem();
+        int rowIndex = 0;
+        boolean found = false;
+        if (itemsForDisplay.size() > 0 && item != null) {
+            for (Item checkoutItem : itemsForDisplay) {
+                if (checkoutItem.getID() == item.getID()) {
+                    found = true;
+                    // itemsForDisplay.remove(checkoutItem);     //Cant just remove because causes a lot of errors
+                }
+
+                if (found == false)
+                    rowIndex++;
+            }
+
+            if (found == true)
+                itemsForDisplay.remove(rowIndex);
         }
     }
 
