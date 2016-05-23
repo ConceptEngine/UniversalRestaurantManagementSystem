@@ -60,8 +60,8 @@ public class MainMenuView {
         mainMenuItemsTest.add("SEND");
         mainMenuItemsTest.add("END");
 
-        VBox mainMenuBox = addVerticalMenuBox(mainMenuItemsTest);
-        VBox subMenuBox = addVerticalMenuBox(mainMenuItemsTest);
+        //VBox mainMenuBox = addVerticalMenuBox(mainMenuItemsTest);
+        //VBox subMenuBox = addVerticalMenuBox(mainMenuItemsTest);
         HBox bottomMenuBox = addHorizontalMenuBox(mainMenuItemsTest);
         VBox billBox = addItemDisplay(itemsForDisplay);
 
@@ -294,11 +294,16 @@ public class MainMenuView {
                                 //Add it to the receipt
                                 boolean isInTheList = false;
                                 for (Item checkoutItem : itemsForDisplay){
+                                   // tableLayoutView.setItems(itemsForDisplay);
                                     if (checkoutItem.getID() == currentItem.getItemID())
                                     {
                                         isInTheList = true;
                                         checkoutItem.setQuantity(checkoutItem.getQuantity() + 1);
-                                        tableLayoutView.refresh();
+                                        Item replacementItem = new Item(currentItem.getItemID(), currentItem.getName(), currentItem.getPrice(), "getType?", checkoutItem.getQuantity());
+                                        //itemsForDisplay.remove(currentItem);
+                                        //itemsForDisplay.set(itemsForDisplay.indexOf(currentItem), checkoutItem );
+                                        itemsForDisplay.set(itemsForDisplay.indexOf(checkoutItem), replacementItem);
+
                                     }
 
                                 }
