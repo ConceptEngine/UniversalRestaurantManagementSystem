@@ -10,5 +10,9 @@ public interface DatabaseAccessObject {
         public boolean tryToLogin(String password);
         public ArrayList<MenuItem> getMenuItems();
         public void InsertMenuItem(MenuItem anItem);
-
+        public boolean isTableOpen(int tableID);
+        public void setTableState(int tableID, int state);
+        public ArrayList<Item> getReceiptItems(int tableID);
+        public void deleteAllTableReceiptItems(int tableID);
+        public void saveReceiptItem(Item item, int tableID);
 }

@@ -47,8 +47,9 @@ public class TableLayoutView {
                 }
 
                 if (button.getText().equals("1")){
+
                     MainMenuView mainMenuView = new MainMenuView();
-                    mainMenuView.start(primaryStage, dbo);
+                    mainMenuView.start(primaryStage, dbo, 1);
                 }
                 // code here for assigning to next TableView with the main menu.
             });

@@ -12,10 +12,22 @@ public class Item {
     private Double price;
     private String timeOfCreation;
     private String type;
+    private String comment;
     private int quantity;
     private double totalPrice;
 
     //constructor
+    public Item(int id, String name, Double price, String type, int quantity, String comment){
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.type = type;
+        timeOfCreation();
+        this.quantity = quantity;
+        this.comment = comment;
+        totalPrice = 0;
+        calculateTotalPrice();
+    }
     public Item(int id, String name, Double price, String type, int quantity){
         this.id = id;
         this.name = name;
@@ -23,6 +35,7 @@ public class Item {
         this.type = type;
         timeOfCreation();
         this.quantity = quantity;
+        this.comment = "";
         totalPrice = 0;
         calculateTotalPrice();
     }
@@ -86,6 +99,14 @@ public class Item {
     public double getTotalPrice() {
         return totalPrice;
     }
+    public void setID(int id) { this.id = id; }
     public int getID() { return id; }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 }
