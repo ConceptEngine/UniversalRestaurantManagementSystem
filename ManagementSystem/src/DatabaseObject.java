@@ -23,7 +23,7 @@ public class DatabaseObject implements DatabaseAccessObject {
         }
     }
 
-    public boolean tryToLogin(String password) {
+    public int getLoginAccessLevel(String password) {
         try {
             String sql = "SELECT * FROM users WHERE password  = '" + password + "'";
 
@@ -32,13 +32,13 @@ public class DatabaseObject implements DatabaseAccessObject {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                return true;
+                return resultSet.getInt(4);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return false;
+        return 0;
     }
 
     public ArrayList<MenuItem> getMenuItems()

@@ -7,7 +7,7 @@ public interface DatabaseAccessObject {
 
         public void ConnectToDatabase();
 
-        public boolean tryToLogin(String password);
+        public int getLoginAccessLevel(String password);
         public ArrayList<MenuItem> getMenuItems();
         public void InsertMenuItem(MenuItem anItem);
         public boolean isTableOpen(int tableID);

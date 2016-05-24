@@ -23,7 +23,8 @@ public class LoginView {
     GridPane grid;      //The gridpane, which will hold the pin number buttons and text field
     TextField pinCode = new TextField();      //Field which displays the entered pin code
     String currentPinCode = "";               //Will contain the pin code
-
+    Stage primaryStage;
+    DatabaseAccessObject dbo;
     public LoginView()
     {
 
@@ -31,6 +32,9 @@ public class LoginView {
 
     public void start(Stage primaryStage, DatabaseAccessObject dbo)
     {
+        this.primaryStage = primaryStage;
+        this.dbo = dbo;
+
         //Get window size, so we can calculate other stuff later
         Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
 
@@ -55,7 +59,7 @@ public class LoginView {
                 }
                 //if we press "enter" button on keyboard
                 if (event.getCode() == KeyCode.ENTER){
-                    if (dbo.tryToLogin(pinCode.getText()) == true) {
+                    /*if (dbo.tryToLogin(pinCode.getText()) == true) {
                         //primaryStage.hide();
                         TableLayoutView tableLayoutView = new TableLayoutView();
                         tableLayoutView.start(primaryStage, dbo);
@@ -66,7 +70,8 @@ public class LoginView {
                     else {
                         currentPinCode = "invalid pin, try again!";
                         pinCode.setText(currentPinCode);
-                    }
+                    }*/
+                    tryToLogin(dbo.getLoginAccessLevel(pinCode.getText()));
                 }
                 currentPinCode += event.getText();
                 pinCode.setText(currentPinCode);
@@ -114,13 +119,14 @@ public class LoginView {
                     currentPinCode += "0";
                     pinCode.setText(currentPinCode);
                 } else {
-                    if (dbo.tryToLogin(pinCode.getText()) == true) {
+                    tryToLogin(dbo.getLoginAccessLevel(pinCode.getText()));
+                    /*if (dbo.getLoginAccessLevel(pinCode.getText()) == 1) {
                         //primaryStage.hide();
                         TableLayoutView tableLayoutView = new TableLayoutView();
                         tableLayoutView.start(primaryStage, dbo);
                         //Try to login
                         //Add code here....
-                    }
+                    }*/
                 }
             });
             //Add the button to the grid
@@ -141,5 +147,19 @@ public class LoginView {
         // it has to be set after setting the scene.
         pinCode.requestFocus();
 
+    }
+
+    private void tryToLogin(int accessLevel)
+    {
+        if (accessLevel == 1) {
+            //User
+            TableLayoutView tableLayoutView = new TableLayoutView();
+            tableLayoutView.start(primaryStage, dbo);
+        }
+        if (accessLevel == 2) {
+            //Admin
+            AdminMenuView adminView = new AdminMenuView();
+            adminView.start(primaryStage, dbo);
+        }
     }
 }
