@@ -29,7 +29,7 @@ public class MainMenuView {
     ArrayList<Item> receiptItems;
     TableView tableLayoutView;
     Stage primaryStage;
-    DatabaseAccessObject dbo;
+        DatabaseAccessObject dbo;
 
     final ObservableList<Item> itemsForDisplay = FXCollections.observableArrayList();
 
@@ -37,7 +37,7 @@ public class MainMenuView {
 
     }
 
-    public void start(Stage primaryStage, DatabaseAccessObject dbo){
+    public void start(Stage primaryStage, DatabaseAccessObject dbo, int i){
         this.primaryStage = primaryStage;
         this.dbo = dbo;
 
@@ -102,6 +102,7 @@ public class MainMenuView {
 
             if (menuItem == "END")
             {
+                button.setStyle("-fx-background-color: red");
                 button.setOnAction(event -> {
                     //LoginView loginMenu = new LoginView();
                     TableLayoutView tableLayout = new TableLayoutView();
