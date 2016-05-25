@@ -42,8 +42,8 @@ public class TableLayoutView {
 
             button.setOnAction(event -> {
                 if (button.getText().equals("END")){
-
-                    primaryStage.hide();
+                    LoginView loginView = new LoginView();
+                    loginView.start(primaryStage, dbo);
                 }
 
                 if (button.getText().equals("1")){

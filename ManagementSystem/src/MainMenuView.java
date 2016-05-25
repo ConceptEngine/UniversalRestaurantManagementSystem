@@ -3,16 +3,16 @@ import javafx.collections.ObservableList;
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
 
 import java.util.ArrayList;
 
@@ -21,19 +21,15 @@ import java.util.ArrayList;
  */
 public class MainMenuView {
 
-    GridPane grid, priceGrid;
+    GridPane grid;
     int[] scrollerLevel = new int[4];
     ArrayList<MenuItem> menuItems;
     int selectedItemLevel1ID = 0;
     int selectedItemLevel2ID = 0;
+    ArrayList<Item> receiptItems;
     TableView tableLayoutView;
     Stage primaryStage;
     DatabaseAccessObject dbo;
-    int tableID;
-
-    //For checkout
-    Label totalPriceLabel;
-
 
     final ObservableList<Item> itemsForDisplay = FXCollections.observableArrayList();
 
@@ -41,10 +37,9 @@ public class MainMenuView {
 
     }
 
-    public void start(Stage primaryStage, DatabaseAccessObject dbo, int tableID){
+    public void start(Stage primaryStage, DatabaseAccessObject dbo){
         this.primaryStage = primaryStage;
         this.dbo = dbo;
-        this.tableID = tableID;
 
         menuItems = dbo.getMenuItems();
 
@@ -52,35 +47,16 @@ public class MainMenuView {
 
         BorderPane layout = new BorderPane();
         grid = new GridPane();
-        priceGrid = new GridPane();
+
 
         ArrayList<String> mainMenuItemsTest = new ArrayList<>();
-
-        //Check if the table is already open
-        if (dbo.isTableOpen(tableID) == true)
-        {
-            //Load items from database
-            ArrayList<Item> receiptItems = new ArrayList<>();
-
-            receiptItems = dbo.getReceiptItems(tableID);
-
-            for (Item item : receiptItems)
-            {
-                itemsForDisplay.add(item);
-            }
-        }
-        else
-        {
-            //Open the table, don't load items
-            dbo.setTableState(tableID, 1);
-        }
 
 
         //TO_DO - creating a test arrayList, have to delete later and reference to a local DB source
         mainMenuItemsTest.add("PAY");
         mainMenuItemsTest.add("PRINT");
         mainMenuItemsTest.add("REMOVE");
-        mainMenuItemsTest.add("ADD MESSAGE");
+        mainMenuItemsTest.add("MESSAGE");
         mainMenuItemsTest.add("SEND");
         mainMenuItemsTest.add("END");
 
@@ -90,16 +66,10 @@ public class MainMenuView {
         VBox billBox = addItemDisplay(itemsForDisplay);
 
 
-        totalPriceLabel = new Label("0");
-        priceGrid.add(billBox, 0, 0, 3, 1);
-        priceGrid.add(new Label("Total price:"), 0, 1);
-        priceGrid.add(totalPriceLabel, 1, 1);
-        priceGrid.add(new Label(" Kr"), 2, 1);
-
         //layout.setRight(mainMenuBox);
         //layout.setCenter(subMenuBox);
         layout.setBottom(bottomMenuBox);
-        layout.setLeft(priceGrid);
+        layout.setLeft(billBox);
         // setting the menu build from right-to-left.
         //layout.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
 
@@ -108,7 +78,7 @@ public class MainMenuView {
         layout.setCenter(grid);
 
         //initialising the view
-        Scene scene = new Scene(layout, screenSize.getWidth(), screenSize.getHeight() - 32);
+        Scene scene = new Scene(layout, screenSize.getWidth(),screenSize.getHeight());
         primaryStage.setTitle("Menu for Table");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -133,41 +103,15 @@ public class MainMenuView {
             if (menuItem == "END")
             {
                 button.setOnAction(event -> {
-                    //Delete the current items
-                    int startID = 0;
-                    dbo.deleteAllTableReceiptItems(tableID);
-
-                    //Save stuff to database
-                    for (Item checkoutItem : itemsForDisplay) {
-                        checkoutItem.setID(startID);
-
-                        System.out.println(checkoutItem.getName());
-                        dbo.saveReceiptItem(checkoutItem, tableID);
-
-                        startID++;
-                    }
-
                     //LoginView loginMenu = new LoginView();
-                    //loginMenu.start(primaryStage, dbo);
-                    goBack();
+                    TableLayoutView tableLayout = new TableLayoutView();
+                    tableLayout.start(primaryStage, dbo);
                 });
             }
             if (menuItem == "REMOVE")
             {
                 button.setOnAction(event -> {
                     removeSelectedRow();
-                });
-            }
-            if (menuItem == "ADD MESSAGE")
-            {
-                button.setOnAction(event -> {
-                    popupTextWindow();
-                });
-            }
-            if (menuItem == "PAY")
-            {
-                button.setOnAction(event -> {
-                    popupPaymentWindow();
                 });
             }
             // adding button to the box
@@ -190,7 +134,7 @@ public class MainMenuView {
         VBox verticalMenuBox = new VBox();
         //setting size width for 2/9 and height for 7/8 - (fraction) - of the whole screen
         //this is gonna be one column out of the 3 that we have on the main menu.
-        verticalMenuBox.setPrefSize((screenSize.getWidth() / 9) * 2, (screenSize.getHeight() / 8) * 6);
+        verticalMenuBox.setPrefSize((screenSize.getWidth() / 9) * 2, (screenSize.getHeight() / 8) * 7);
         // creating button by the number of element found in menuItem.
         for (String menuItem : menuItems) {
             //setting the name of the button ---- first in the array will be the first button's name and so on...
@@ -211,7 +155,7 @@ public class MainMenuView {
         return verticalMenuBox;
     }
 
-    private void refreshMenuItemBoxes()
+    public void refreshMenuItemBoxes()
     {
         //VBox mainMenuBox = addVerticalMenuBox(mainMenuItemsTest);
         grid.getChildren().clear();
@@ -238,7 +182,7 @@ public class MainMenuView {
         //  layout.setCenter(grid);
         // System.out.println(selectedItemLevel2ID);
     }
-    private VBox addVerticalMenuBox2(ArrayList<MenuItem> menuItems, int level, int parentID){
+    public VBox addVerticalMenuBox2(ArrayList<MenuItem> menuItems, int level, int parentID){
         // vertical box to accommodate buttons with names, whats given at creation.
         // button names to be held in a Arraylist<String> and dynamically created from external source, can ba changed later
         // for anything that lets say that holds objects, so an item can have Name, Price, and so on....
@@ -351,24 +295,21 @@ public class MainMenuView {
                                 //Add it to the receipt
                                 boolean isInTheList = false;
                                 for (Item checkoutItem : itemsForDisplay){
+                                   // tableLayoutView.setItems(itemsForDisplay);
                                     if (checkoutItem.getID() == currentItem.getItemID())
                                     {
                                         isInTheList = true;
                                         checkoutItem.setQuantity(checkoutItem.getQuantity() + 1);
-                                        tableLayoutView.refresh();
-
-
-                                        //Item replacementItem = new Item(currentItem.getItemID(), currentItem.getName(), currentItem.getPrice(), "getType?", checkoutItem.getQuantity());
+                                        Item replacementItem = new Item(currentItem.getItemID(), currentItem.getName(), currentItem.getPrice(), "getType?", checkoutItem.getQuantity());
                                         //itemsForDisplay.remove(currentItem);
                                         //itemsForDisplay.set(itemsForDisplay.indexOf(currentItem), checkoutItem );
-                                        //itemsForDisplay.set(itemsForDisplay.indexOf(checkoutItem), replacementItem);
-                                    }
-                                }
+                                        itemsForDisplay.set(itemsForDisplay.indexOf(checkoutItem), replacementItem);
 
+                                    }
+
+                                }
                                 if (isInTheList == false)
                                     itemsForDisplay.add(new Item(currentItem.getItemID(), currentItem.getName(), currentItem.getPrice(), "getType?", 1));
-
-                                updateTotalPrice();
                             });
 
                             // adding button to the box
@@ -427,38 +368,31 @@ public class MainMenuView {
         return verticalMenuBox;
     }
 
-    private VBox addItemDisplay(ObservableList<Item> items){
+    public VBox addItemDisplay(ObservableList<Item> items){
 
         // creating display layout
         Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
         VBox itemDisplay = new VBox();
-        itemDisplay.setPrefSize((screenSize.getWidth() / 3), (screenSize.getHeight() / 5) * 4);
+        itemDisplay.setPrefSize((screenSize.getWidth() / 3), (screenSize.getHeight()));
 
         //creating tableView to have rows and columns
         tableLayoutView = new TableView(items);
-        tableLayoutView.setPrefSize(screenSize.getWidth() / 3, (screenSize.getHeight() / 5) * 4);
+        tableLayoutView.setPrefSize(screenSize.getWidth() / 3, screenSize.getHeight());
         //creating the 3 columns
-        TableColumn tableColumn1 = new TableColumn("Item Name");
-        TableColumn tableColumn2 = new TableColumn("Quantity");
+        TableColumn tableColumn1 = new TableColumn("Quantity");
+        TableColumn tableColumn2 = new TableColumn("Item Name");
         TableColumn tableColumn3 = new TableColumn("Total price");
-        TableColumn tableColumn4 = new TableColumn("Comments");
 
-        tableColumn1.setCellValueFactory(new PropertyValueFactory<>("name"));
-        tableColumn2.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        tableColumn1.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        tableColumn2.setCellValueFactory(new PropertyValueFactory<>("name"));
         tableColumn3.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
-        tableColumn4.setCellValueFactory(new PropertyValueFactory<>("comment"));
-
         //setting column width
-        tableColumn1.setMinWidth((itemDisplay.getPrefWidth() / 10) * 3);
-        tableColumn2.setMinWidth((itemDisplay.getPrefWidth() / 10) * 1);
-        tableColumn3.setMinWidth((itemDisplay.getPrefWidth() / 10) * 1);
-        tableColumn4.setMinWidth((itemDisplay.getPrefWidth() / 10) * 4);
+        tableColumn1.setMinWidth((itemDisplay.getPrefWidth() / 10) * 1);
+        tableColumn2.setMinWidth((itemDisplay.getPrefWidth() / 10) * 6);
+        tableColumn3.setMinWidth((itemDisplay.getPrefWidth() / 10) * 3);
         //adding columns to table
 
-        tableLayoutView.getColumns().addAll(tableColumn1, tableColumn2, tableColumn3, tableColumn4);
-
-
-
+        tableLayoutView.getColumns().addAll(tableColumn1, tableColumn2, tableColumn3);
 
         //adding bill view to vbox
         itemDisplay.getChildren().add(tableLayoutView);
@@ -468,8 +402,11 @@ public class MainMenuView {
 
     private void refreshReceiptWindow()
     {
-        //itemsForDisplay.removeAll();
-
+        itemsForDisplay.removeAll();
+        for (Item item : receiptItems)
+        {
+            itemsForDisplay.add(item);
+        }
     }
 
     private void removeSelectedRow()
@@ -491,129 +428,6 @@ public class MainMenuView {
             if (found == true)
                 itemsForDisplay.remove(rowIndex);
         }
-
-        updateTotalPrice();
-    }
-
-    private void updateTotalPrice()
-    {
-        //calculate total price
-        int totalPrice = 0;
-        for (Item checkoutItem : itemsForDisplay) {
-            totalPrice += checkoutItem.getTotalPrice();
-        }
-
-        //Update label
-        totalPriceLabel.setText(Integer.toString(totalPrice));
-    }
-    private void popupTextWindow()
-    {
-        GridPane popupGrid = new GridPane();
-
-        Label textLabel = new Label("Please enter your message:");
-        TextField textfield = new TextField();
-        Button okButton = new Button("OK");
-        Button cancelButton = new Button("Cancel");
-
-        //popup.show(primaryStage);
-        Stage newStage = new Stage();
-        VBox comp = new VBox();
-
-        popupGrid.add(textLabel, 0, 0);
-        popupGrid.add(textfield, 1, 0);
-        popupGrid.add(okButton, 0, 1);
-        popupGrid.add(cancelButton, 1, 1);
-
-
-
-        Scene stageScene = new Scene(popupGrid, 300, 100);
-        newStage.setScene(stageScene);
-        newStage.show();
-
-        okButton.setOnAction(event -> {
-            if (textfield.getText().length() > 0)
-                insertComment(textfield.getText());
-            newStage.close();
-        });
-        cancelButton.setOnAction(event -> {
-            newStage.close();
-        });
-    }
-    private void popupPaymentWindow()
-    {
-        GridPane popupGrid = new GridPane();
-
-        Label textLabel = new Label("Please choose a payment option:");
-        TextField textfield = new TextField();
-        Button payWithCash = new Button("Pay with cash");
-        Button payWithCard = new Button("Pay with card");
-        Button cancelButton = new Button("Cancel");
-
-        //popup.show(primaryStage);
-        Stage newStage = new Stage();
-        VBox comp = new VBox();
-
-        textLabel.setMaxWidth(Double.MAX_VALUE);
-        payWithCash.setMaxWidth(Double.MAX_VALUE);
-        payWithCard.setMaxWidth(Double.MAX_VALUE);
-        cancelButton.setMaxWidth(Double.MAX_VALUE);
-
-        comp.getChildren().addAll(textLabel);
-        comp.getChildren().addAll(payWithCash);
-        comp.getChildren().addAll(payWithCard);
-        comp.getChildren().addAll(cancelButton);
-        //popupGrid.add(textLabel, 0, 0);
-        //popupGrid.add(textfield, 1, 0);
-       //popupGrid.add(okButton, 0, 1);
-       // popupGrid.add(cancelButton, 1, 1);
-
-
-
-        Scene stageScene = new Scene(comp, 300, 100);
-        newStage.setScene(stageScene);
-        newStage.show();
-
-        payWithCash.setOnAction(event -> {
-            dbo.deleteAllTableReceiptItems(tableID);
-            newStage.close();
-
-            //Go back to table menu
-            dbo.setTableState(tableID, 0);
-            goBack();
-        });
-        payWithCard.setOnAction(event -> {
-            dbo.deleteAllTableReceiptItems(tableID);
-            newStage.close();
-
-            //Go back to table menu
-            dbo.setTableState(tableID, 0);
-            goBack();
-        });
-        cancelButton.setOnAction(event -> {
-            newStage.close();
-        });
-    }
-
-    private void insertComment(String commentText)
-    {
-        System.out.println(commentText);
-        Item item = (Item)tableLayoutView.getSelectionModel().getSelectedItem();
-        int rowIndex = 0;
-        boolean found = false;
-        if (itemsForDisplay.size() > 0 && item != null) {
-            for (Item checkoutItem : itemsForDisplay) {
-                if (checkoutItem.getID() == item.getID()) {
-                    checkoutItem.setComment(commentText);
-                    tableLayoutView.refresh();
-                }
-            }
-        }
-    }
-
-    public void goBack()
-    {
-        TableLayoutView tableLayoutView = new TableLayoutView();
-        tableLayoutView.start(primaryStage, dbo);
     }
 
 }
